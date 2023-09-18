@@ -1,7 +1,7 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
-const cars = require("./routes/cars");
+const cars = require("./routes/car");
 const users = require("./routes/users");
 // const cart = require('./routes/cart');
 // const order = require("./routes/order");
@@ -60,6 +60,6 @@ app.use(function (err, req, res, next) {
   if (err.status === 404) res.status(404).json({ message: "Not found" });
   else res.status(500).json({ message: "Something looks wrong :( !!!" });
 });
-app.listen(3001, function () {
-  console.log("Node server listening on port 3001");
+app.listen(4000, function () {
+  console.log("Node server listening on port 4000");
 });
