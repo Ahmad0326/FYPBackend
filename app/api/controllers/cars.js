@@ -20,9 +20,10 @@ const getAll = async (req, res, next) => {
       id: car._id,
       name: car.name,
       model: car.model,
-      seats: car.seats,
-      rent: car.rent,
       type: car.type,
+      rent: car.rent,
+      status: car.status,
+      make: car.make,
     }));
     res.json({
       status: "success",
@@ -44,7 +45,7 @@ const updateById = async (req, res, next) => {
     });
     res.json({
       status: "success",
-      message: "Movie updated successfully!!!",
+      message: "Car updated successfully!!!",
       data: null,
     });
   } catch (error) {
@@ -54,10 +55,10 @@ const updateById = async (req, res, next) => {
 
 const deleteById = async (req, res, next) => {
   try {
-    await movieModel.findByIdAndRemove(req.params.movieId);
+    await movieModel.findByIdAndRemove(req.params.carId);
     res.json({
       status: "success",
-      message: "Movie deleted successfully!!!",
+      message: "Car deleted successfully!!!",
       data: null,
     });
   } catch (error) {
@@ -67,17 +68,19 @@ const deleteById = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   try {
-    const newMovie = {
+    const newCar = {
       name: req.body.name,
-      released_on: req.body.released_on,
-      seats: req.body.ticketCount,
-      price: 100,
+      model: req.body.model,
+      type: req.body.type,
+      rent: req.body.rent,
+      status: req.body.status,
+      make: req.body.make,
     };
-    console.log("movie", newMovie);
-    await movieModel.create(newMovie);
+    console.log("Car", newCar);
+    await carModel.create(newCar);
     res.json({
       status: "success",
-      message: "Movie added successfully!!!",
+      message: "Car added successfully!!!",
       data: null,
     });
   } catch (error) {
