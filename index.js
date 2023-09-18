@@ -1,8 +1,8 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
-// const movies = require('./routes/movies') ;
-// const users = require('./routes/users');
+const cars = require("./routes/cars");
+const users = require("./routes/users");
 // const cart = require('./routes/cart');
 // const order = require("./routes/order");
 const bodyParser = require("body-parser");
@@ -22,9 +22,9 @@ app.get("/", function (req, res) {
   res.json({ tutorial: "Build REST API with node.js" });
 });
 // // public route
-// app.use("/users", users);
-// // private route
-// app.use("/movies", validateUser, movies);
+app.use("/users", users);
+// private route
+app.use("/cars", validateUser, cars);
 // app.use("/cart", validateUser, cart);
 // app.use("/order ", validateUser, order);
 app.get("/favicon.ico", function (req, res) {
