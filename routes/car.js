@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const movieController = require('../app/api/controllers/car');
-router.get('/', movieController.getAll);
-router.post('/', movieController.create);
-router.get('/:carId', movieController.getById);
-router.put('/:carId', movieController.updateById);
-router.delete('/:carId', movieController.deleteById);
+const carController = require('../app/api/controllers/car');
+router.get('/', carController.getAll);
+router.post('/', carController.create);
+router.get('/:carId', carController.getById);
+router.put('/:carId', carController.updateById);
+router.delete('/:carId', carController.deleteById);
 
 module.exports = router;
