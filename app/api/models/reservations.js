@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const cartSchema = new mongoose.Schema({
+const reservationsSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
   },
-  items: [
+  reservations: [
     {
-      movieId: {
+      carId: {
         type: String,
         required: true,
       },
@@ -15,24 +15,22 @@ const cartSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      released_on: {
+      startDate: {
         type: Date,
         required: true,
       },
-      price: {
-        type: Number,
+      endDate: {
+        type: Date,
         required: true,
       },
-      ticketCount: {
+      rent: {
         type: Number,
-        default:1,
-        min: 1,
-        max: 5,
+        required: true,
       },
     },
   ],
 });
 
-const cartModel = mongoose.model("Cart", cartSchema);
+const reservationsModel = mongoose.model("Reservations", reservationsSchema);
 
-module.exports = cartModel;
+module.exports = reservationsModel;

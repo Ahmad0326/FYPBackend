@@ -1,53 +1,55 @@
-const cartModel = require("../models/cart");
-const movieModel = require("../models/movies");
+const reservationsModel = require("../models/reservations");
+const carModel = require("../models/cars");
 
 const updateTickets = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { userId, tickets } = req.body;
+    const { userId, type } = req.body;
     console.log("in the update tickets---->", id, req.body);
-    const cart = await cartModel.findOne({ userId: userId });
-    const movieInfo = await movieModel.findById(id);
+    const reservations = await reservationsModel.findOne({ userId: userId });
+    const carInfo = await carModel.findById(id);
 
-    if (!movieInfo) {
+    if (!carInfo) {
       return res.json({
         status: "error",
-        message: "Movie not found.",
+        message: "Car not found.",
         data: null,
       });
     }
 
-    if (!cart) {
+    if (!reservations) {
       return res.json({
         status: "error",
-        message: "Cart doesn't exist.",
+        message: "Reservation doesn't exist.",
         data: null,
       });
     }
 
-    const existingCartItem = cart.items.find((item) => item.movieId === id);
+    const existingReservation = reservations.items.find(
+      (item) => item.carId === id
+    );
 
-    if (existingCartItem) {
-      existingCartItem.ticketCount = tickets;
-      existingCartItem.price = movieInfo.price * tickets;
-      await cart.save();
+    if (existingReservation) {
+      existingReservation.type = type;
+      existingReservation.rent = carInfo.price * days;
+      await reservations.save();
       return res.json({
         status: "success",
-        message: "Ticket count updated.",
+        message: "Type updated.",
         data: cart,
       });
     } else {
       return res.json({
         status: "error",
-        message: "Item not found in cart.",
+        message: "Item not found in reservations.",
         data: null,
       });
     }
   } catch (error) {
-    console.error("Error updating ticket count:", error);
+    console.error("Error updating type:", error);
     return res.json({
       status: "error",
-      message: "Error updating ticket count.",
+      message: "Error updating type.",
       data: null,
     });
   }
@@ -56,60 +58,42 @@ const updateTickets = async (req, res, next) => {
 const addToCart = async (req, res, next) => {
   try {
     console.log("from the backendd----->", req.body);
-    const { userId, id, tickets } = req.body;
+    const { userId, id, days } = req.body;
     console.log(userId);
-    const cart = await cartModel.findOne({ userId: userId });
-    const movieInfo = await movieModel.findById(id);
-    if (!movieInfo) {
+    const reservations = await reservationsModel.findOne({ userId: userId });
+    const carInfo = await carModel.findById(id);
+    if (!carInfo) {
       return res.json({
         status: "error",
-        message: "Movie not found.",
+        message: "car not found.",
         data: null,
       });
     }
 
-    if (!cart) {
-      const newCart = new cartModel({
+    if (!reservations) {
+      const newReservation = new reservationsModel({
         userId: userId,
-        items: [
+        Reservations: [
           {
-            movieId: id,
-            name: movieInfo.name,
-            released_on: movieInfo.released_on,
-            ticketCount: tickets,
-            price: tickets * movieInfo.price,
+            carId: id,
+            name: carInfo.name,
+            startDate: startDate,
+            endDate: endDate,
+            price: 100,
           },
         ],
       });
 
-      await newCart.save();
+      await newReservation.save();
     } else {
-      const existingCartItem = cart.items.find((item) => item.movieId === id);
-      console.log("----------------exxisting cart---------------");
+      const existingReservations = reservations.items.find((item) => item.carId === id);
+      console.log("----------------exxisting reservations---------------");
       //console.log("tickets ---->", existingCartItem.ticketCount)
 
-      if (existingCartItem) {
-        if (existingCartItem.ticketCount > 5) {
-          return res
-            .status(400)
-            .json({
-              status: "error",
-              message:
-                "1.You can't purchase more than 5 tickets for this movie.",
-              data: null,
-            });
-        } else if (existingCartItem.ticketCount + tickets > 5) {
-          return res
-            .status(400)
-            .json({
-              status: "error",
-              message:
-                "2.You can't purchase more than 5 tickets for this movie.",
-              data: null,
-            });
-        }
+      if (existingReservations) {
+        
         console.log("tickets ---->", existingCartItem.ticketCount);
-        existingCartItem.ticketCount += tickets;
+        existingReservations.ticketCount += tickets;
         console.log("tickets ---->", existingCartItem.ticketCount);
         console.log("price ---->", existingCartItem.price);
 
