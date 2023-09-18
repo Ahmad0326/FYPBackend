@@ -1,8 +1,34 @@
-const carModel = require("../models/cars"); // Import your movie model
+const carModel = require("../models/cars");
 
-const getById = async (req, res, next) => {
+const getByModel = async (req, res, next) => {
   try {
-    const carInfo = await carModel.findById(req.params.movieId);
+    const carInfo = await carModel.find({ model: req.body.model });
+    res.json({
+      status: "success",
+      message: "car found!!!",
+      data: { movies: movieInfo },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getByColor = async (req, res, next) => {
+  try {
+    const carInfo = await carModel.find({ color: req.body.color });
+    res.json({
+      status: "success",
+      message: "car found!!!",
+      data: { movies: movieInfo },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getByName = async (req, res, next) => {
+  try {
+    const carInfo = await carModel.find({ name: req.body.name });
     res.json({
       status: "success",
       message: "car found!!!",
@@ -24,6 +50,7 @@ const getAll = async (req, res, next) => {
       rent: car.rent,
       status: car.status,
       make: car.make,
+      color: car.color,
     }));
     res.json({
       status: "success",
@@ -75,6 +102,7 @@ const create = async (req, res, next) => {
       rent: req.body.rent,
       status: req.body.status,
       make: req.body.make,
+      color: req.body.color,
     };
     console.log("Car", newCar);
     await carModel.create(newCar);
@@ -89,7 +117,9 @@ const create = async (req, res, next) => {
 };
 
 module.exports = {
-  getById,
+  getByColor,
+  getByName,
+  getByModel,
   getAll,
   updateById,
   deleteById,

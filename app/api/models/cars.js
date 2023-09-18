@@ -32,5 +32,10 @@ const CarSchema = new Schema({
     trim: true,
     required: true,
   },
+  color: {
+    type: String,
+    trim: true,
+    required: true,
+  },
 });
 module.exports = mongoose.model("Car", CarSchema);
