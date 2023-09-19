@@ -13,6 +13,21 @@ const getByModel = async (req, res, next) => {
   }
 };
 
+const getById = async (req, res, next) => {
+  try {
+    const { carId } = req.params;
+    console.log("id in the backend----->", carId);
+    const carInfo = await carModel.findById({ _id: carId });
+    res.json({
+      status: "success",
+      message: "car found!!!",
+      data: { car: carInfo },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getByColor = async (req, res, next) => {
   try {
     const carInfo = await carModel.find({ color: req.body.color });
@@ -123,4 +138,5 @@ module.exports = {
   updateById,
   deleteById,
   create,
+  getById,
 };
