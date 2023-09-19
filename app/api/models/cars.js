@@ -13,7 +13,7 @@ const CarSchema = new Schema({
     required: true,
   },
   rent: {
-    type: String,
+    type: Number,
     required: true,
     default: 100,
   },
@@ -30,7 +30,7 @@ const CarSchema = new Schema({
   status: {
     type: String,
     trim: true,
-    required: true,
+    default: "available",
   },
   color: {
     type: String,

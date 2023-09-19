@@ -42,7 +42,7 @@ const getByName = async (req, res, next) => {
 const getAll = async (req, res, next) => {
   try {
     const car = await carModel.find({});
-    const carList = car.map((movie) => ({
+    const carList = car.map((car) => ({
       id: car._id,
       name: car.name,
       model: car.model,
@@ -54,7 +54,7 @@ const getAll = async (req, res, next) => {
     }));
     res.json({
       status: "success",
-      message: "Movies list found!!!",
+      message: "Car list found!!!",
       data: { cars: carList },
     });
   } catch (error) {
@@ -100,7 +100,6 @@ const create = async (req, res, next) => {
       model: req.body.model,
       type: req.body.type,
       rent: req.body.rent,
-      status: req.body.status,
       make: req.body.make,
       color: req.body.color,
     };
