@@ -6,6 +6,7 @@ router.post("/", carController.create);
 router.get("/:carId", carController.getById);
 router.get("/:carId", carController.getByName);
 router.put("/:carId", carController.updateById);
+router.put("/status/:carId", carController.updateStatus);
 router.delete("/:carId", carController.deleteById);
 
 module.exports = router;

@@ -77,6 +77,23 @@ const getAll = async (req, res, next) => {
   }
 };
 
+const updateStatus = async (req, res, next) => {
+  try {
+    console.log("in the update id ------>", req.body);
+    console.log("in the update id ------>", req.params);
+    await carModel.findByIdAndUpdate(req.params.carId, {
+      status: "Hired",
+    });
+    res.json({
+      status: "success",
+      message: "car Status updated successfully!!!",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateById = async (req, res, next) => {
   try {
     console.log("in the update id ------>", req.body);
@@ -141,6 +158,7 @@ module.exports = {
   getByModel,
   getAll,
   updateById,
+  updateStatus,
   deleteById,
   create,
   getById,
