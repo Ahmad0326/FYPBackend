@@ -80,10 +80,14 @@ const getAll = async (req, res, next) => {
 const updateById = async (req, res, next) => {
   try {
     console.log("in the update id ------>", req.body);
-    await movieModel.findByIdAndUpdate(req.params.movieId, {
+    console.log("in the update id ------>", req.params);
+    await carModel.findByIdAndUpdate(req.params.carId, {
       name: req.body.name,
+      model: req.body.model,
+      type: req.body.type,
       rent: req.body.rent,
-      status: req.body.status,
+      make: req.body.make,
+      color: req.body.color,
     });
     res.json({
       status: "success",
@@ -97,7 +101,7 @@ const updateById = async (req, res, next) => {
 
 const deleteById = async (req, res, next) => {
   try {
-    await movieModel.findByIdAndRemove(req.params.carId);
+    await carModel.findByIdAndRemove(req.params.carId);
     res.json({
       status: "success",
       message: "Car deleted successfully!!!",
@@ -111,6 +115,7 @@ const deleteById = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const newCar = {
+      managerId: req.body.managerId,
       name: req.body.name,
       model: req.body.model,
       type: req.body.type,

@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 // Define a schema
 const Schema = mongoose.Schema;
 const CarSchema = new Schema({
+  managerId: {
+    type: String,
+    trim: true,
+    required: true
+  },
   name: {
     type: String,
     trim: true,
