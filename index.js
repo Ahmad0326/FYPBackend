@@ -3,7 +3,7 @@ const logger = require("morgan");
 const cors = require("cors");
 const cars = require("./routes/car");
 const users = require("./routes/users");
-// const cart = require('./routes/cart');
+const reservations = require("./routes/reservations");
 // const order = require("./routes/order");
 const bodyParser = require("body-parser");
 const mongoose = require("./config/database"); //database configuration
@@ -25,7 +25,7 @@ app.get("/", function (req, res) {
 app.use("/users", users);
 // private route
 app.use("/cars", validateUser, cars);
-// app.use("/cart", validateUser, cart);
+app.use("/reservations", validateUser, reservations);
 // app.use("/order ", validateUser, order);
 app.get("/favicon.ico", function (req, res) {
   res.sendStatus(204);

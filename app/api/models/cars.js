@@ -35,7 +35,7 @@ const CarSchema = new Schema({
   status: {
     type: String,
     trim: true,
-    default: "available",
+    default: "Available",
   },
   color: {
     type: String,

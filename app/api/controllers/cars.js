@@ -77,23 +77,31 @@ const getAll = async (req, res, next) => {
   }
 };
 
-const updateStatus = async (req, res, next) => {
-  try {
-    console.log("in the update id ------>", req.body);
-    console.log("in the update id ------>", req.params);
-    await carModel.findByIdAndUpdate(req.params.carId, {
-      status: "Hired",
-    });
-    res.json({
-      status: "success",
-      message: "car Status updated successfully!!!",
-      data: null,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// const updateStatus = async (req, res, next) => {
+//   try {
+//     const { carId } = req.params;
 
+//     const car = await carModel.findById(carId);
+//     if (!car) {
+//       return res.status(404).json({
+//         status: "error",
+//         message: "Car not found.",
+//         data: null,
+//       });
+//     }
+
+//     car.status = car.status === "Available" ? "Hired" : "Available";
+//     await car.save();
+
+//     res.json({
+//       status: "success",
+//       message: `Car status updated to ${car.status}`,
+//       data: car.status,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 const updateById = async (req, res, next) => {
   try {
     console.log("in the update id ------>", req.body);
@@ -158,7 +166,7 @@ module.exports = {
   getByModel,
   getAll,
   updateById,
-  updateStatus,
+  // updateStatus,
   deleteById,
   create,
   getById,

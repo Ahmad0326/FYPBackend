@@ -1,21 +1,13 @@
+const { differenceInDays } = require("date-fns");
 const reservationsModel = require("../models/reservations");
 const carModel = require("../models/cars");
 
 const updateReservation = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { userId, type } = req.body;
-    console.log("in the update tickets---->", id, req.body);
+    const { userId, startDate, endDate, rent } = req.body;
+    console.log("in the update reservation ---->", id, req.body);
     const reservations = await reservationsModel.findOne({ userId: userId });
-    const carInfo = await carModel.findById(id);
-
-    if (!carInfo) {
-      return res.json({
-        status: "error",
-        message: "Car not found.",
-        data: null,
-      });
-    }
 
     if (!reservations) {
       return res.json({
@@ -30,13 +22,16 @@ const updateReservation = async (req, res, next) => {
     );
 
     if (existingReservation) {
-      existingReservation.type = type;
-      existingReservation.rent = carInfo.price * days;
+      existingReservation.rent = calculateRent(startDate, endDate, rent);
+
+      existingReservation.startDate = startDate;
+      existingReservation.endDate = endDate;
+
       await reservations.save();
       return res.json({
         status: "success",
-        message: "Type updated.",
-        data: cart,
+        message: "Reservation updated.",
+        data: reservations,
       });
     } else {
       return res.json({
@@ -46,10 +41,10 @@ const updateReservation = async (req, res, next) => {
       });
     }
   } catch (error) {
-    console.error("Error updating type:", error);
+    console.error("Error updating reservation:", error);
     return res.json({
       status: "error",
-      message: "Error updating type.",
+      message: "Error updating reservation.",
       data: null,
     });
   }
@@ -58,14 +53,14 @@ const updateReservation = async (req, res, next) => {
 const makeAReservation = async (req, res, next) => {
   try {
     console.log("from the backendd----->", req.body);
-    const { userId, id, days } = req.body;
+    const { userId, carId, startDate, endDate, rent } = req.body;
     console.log(userId);
     const reservations = await reservationsModel.findOne({ userId: userId });
-    const carInfo = await carModel.findById(id);
+    const carInfo = await carModel.findById(carId);
     if (!carInfo) {
       return res.json({
         status: "error",
-        message: "car not found.",
+        message: "Car not found.",
         data: null,
       });
     }
@@ -73,46 +68,29 @@ const makeAReservation = async (req, res, next) => {
     if (!reservations) {
       const newReservation = new reservationsModel({
         userId: userId,
-        Reservations: [
+        bookings: [
           {
-            carId: id,
+            carId: carId,
             name: carInfo.name,
             startDate: startDate,
             endDate: endDate,
-            price: 100,
+            rent: calculateRent(startDate, endDate, rent),
           },
         ],
       });
-
+      await carModel.findByIdAndUpdate(carId, { status: "Hired" });
       await newReservation.save();
     } else {
-      const existingReservations = reservations.items.find(
-        (item) => item.carId === id
-      );
-      console.log("----------------exxisting reservations---------------");
-      //console.log("tickets ---->", existingCartItem.ticketCount)
+      console.log("----------------existing reservations---------------");
 
-      if (existingReservations) {
-        console.log("end date ---->", existingReservations.endDate);
-
-        console.log("start date ---->", existingReservations.startDate);
-        console.log("price ---->", existingReservations.rent);
-
-        //existingCartItem.rent += tickets * movieInfo.price;
-        console.log("price ---->", tickets, existingCartItem.price);
-      } else {
-        // if (cart.items.length >= 5) {
-        //   return res.status(400).json({ status: "error", message: "You can't add more than 5 different movies to the cart.", data: null });
-        // }
-        reservations.items.push({
-          carId: id,
-          name: movieInfo.name,
-          startDate: startDate,
-          endDate: endDate,
-          rent: 100,
-        });
-        console.log("cart----->", cart);
-      }
+      reservations.bookings.push({
+        carId: carId,
+        name: carInfo.name,
+        startDate: startDate,
+        endDate: endDate,
+        rent: calculateRent(startDate, endDate, rent),
+      });
+      await carModel.findByIdAndUpdate(carId, { status: "Hired" });
       await reservations.save();
     }
 
@@ -127,17 +105,15 @@ const makeAReservation = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(error);
-    //return res.json({ status: "error", message: "Unable to add item to cart.", data: null });
   }
 };
 
-const removeFromReservations = async (req, res, next) => {
+const removeReservations = async (req, res, next) => {
   try {
     console.log("In the backend of remove cart---->", req.body, req.params);
     const { carId } = req.params;
     const { userId } = req.body;
 
-    // Find the user's cart based on userId
     const reservations = await reservationsModel.findOne({ userId });
     let car = await carModel.findOne({ _id: carId });
 
@@ -147,7 +123,6 @@ const removeFromReservations = async (req, res, next) => {
         .json({ error: "reservations not found against user id" });
     }
 
-    // Find the index of the cart item with the specified movieId
     const reservationItemIndex = reservations.items.findIndex(
       (item) => item.carId.toString() === carId
     );
@@ -158,17 +133,10 @@ const removeFromReservations = async (req, res, next) => {
         .json({ error: "Item not found in the reservation" });
     }
 
-    // Increment the movie's totalTickets
-    ////movie.seats++;
-
-    // Save the updated movie document
-    //await movie.save();
-
-    // Remove the item from the cart
-    reservation.items.splice(reservationItemIndex, 1);
-
-    // Save the updated cart document
+    reservations.items.splice(reservationItemIndex, 1);
     await reservations.save();
+
+    await carModel.findByIdAndUpdate(carId, { status: "Available" });
 
     const reservationUpdated = await reservationsModel
       .findOne({ userId })
@@ -191,7 +159,7 @@ const getReservations = async (req, res, next) => {
   try {
     console.log(req.params.userId);
     const userId = req.params.userId;
-    const reservations = await reservationModel.findOne({ userId }); // Populate the movie details
+    const reservations = await reservationsModel.findOne({ userId });
 
     if (!reservations) {
       return res.json({ message: "No reservations found" });
@@ -211,6 +179,11 @@ const getReservations = async (req, res, next) => {
 module.exports = {
   makeAReservation,
   getReservations,
-  removeFromReservations,
+  removeReservations,
   updateReservation,
 };
+
+function calculateRent(startDate, endDate, dailyRent) {
+  const numDays = differenceInDays(new Date(endDate), new Date(startDate));
+  return numDays * dailyRent;
+}

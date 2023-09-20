@@ -5,7 +5,7 @@ const reservationsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  reservations: [
+  bookings: [
     {
       carId: {
         type: String,
