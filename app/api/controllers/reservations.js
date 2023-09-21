@@ -110,20 +110,24 @@ const makeAReservation = async (req, res, next) => {
 
 const removeReservations = async (req, res, next) => {
   try {
-    console.log("In the backend of remove cart---->", req.body, req.params);
+    console.log(
+      "In the backend of remove reservation---->",
+      req.body,
+      req.params
+    );
     const { carId } = req.params;
     const { userId } = req.body;
 
     const reservations = await reservationsModel.findOne({ userId });
-    let car = await carModel.findOne({ _id: carId });
+    let car = await carModel.findOne({ carId });
 
     if (!reservations) {
       return res
         .status(404)
         .json({ error: "reservations not found against user id" });
     }
-
-    const reservationItemIndex = reservations.items.findIndex(
+    console.log("car in the backend---->", car);
+    const reservationItemIndex = reservations.bookings.findIndex(
       (item) => item.carId.toString() === carId
     );
     console.log("cartitem index---->", reservationItemIndex);
@@ -133,14 +137,12 @@ const removeReservations = async (req, res, next) => {
         .json({ error: "Item not found in the reservation" });
     }
 
-    reservations.items.splice(reservationItemIndex, 1);
+    reservations.bookings.splice(reservationItemIndex, 1);
     await reservations.save();
 
     await carModel.findByIdAndUpdate(carId, { status: "Available" });
 
-    const reservationUpdated = await reservationsModel
-      .findOne({ userId })
-      .populate("items.carId");
+    const reservationUpdated = await reservationsModel.findOne({ userId });
 
     return res.json({
       message: "car removed from the reservations",
