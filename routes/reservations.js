@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const cartController = require("../app/api/controllers/reservations");
-router.get("/:userId", cartController.getReservations);
-router.post("/", cartController.makeAReservation);
-router.put("/updatetickets/:id", cartController.updateReservation);
-router.delete("/:carId", cartController.removeReservations);
+const reservationController = require("../app/api/controllers/reservations");
+router.get("/:userId", reservationController.getReservations);
+router.get("/", reservationController.getAllReservations)
+router.post("/", reservationController.makeAReservation);
+router.put("/updatetickets/:id", reservationController.updateReservation);
+router.delete("/:carId", reservationController.removeReservations);
+
 
 module.exports = router;

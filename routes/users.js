@@ -7,7 +7,7 @@ router.post("/register", userController.create);
 router.post("/authenticate", userController.authenticate);
 router.get("/all", userController.getAllUsers);
 router.put("/:userId/updateUser", userController.updateUser);
-router.delete("/:managerId", userController.deleteManager);
+router.delete("/deletemanager/:managerId", userController.deleteManager);
 router.delete("/:userId", userController.deleteUser);
 
 module.exports = router;

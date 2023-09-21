@@ -1,6 +1,7 @@
 const { differenceInDays } = require("date-fns");
 const reservationsModel = require("../models/reservations");
 const carModel = require("../models/cars");
+const userModel = require("../models/users");
 
 const updateReservation = async (req, res, next) => {
   try {
@@ -152,6 +153,10 @@ const removeReservations = async (req, res, next) => {
 
     await carModel.findByIdAndUpdate(carId, { status: "Available" });
 
+    if (reservations.bookings.length === 0) {
+      await reservationsModel.findOneAndDelete({ userId });
+    }
+
     const reservationUpdated = await reservationsModel.findOne({ userId });
 
     return res.json({
@@ -164,6 +169,30 @@ const removeReservations = async (req, res, next) => {
     return res
       .status(500)
       .json({ error: "Unable to remove car from reservation" });
+  }
+};
+const getAllReservations = async (req, res, next) => {
+  try {
+    const reservations = await reservationsModel.find({}).populate({
+      // Make sure "bookings" matches your schema field name
+
+      path: "userId",
+      model: userModel, // Replace with the actual user model
+      select: "name", // Specify the field you want to populate
+    });
+
+    if (!reservations) {
+      return res.json({ message: "No reservations found" });
+    }
+
+    return res.json({
+      status: "success",
+      message: "Reservations Found Successfully!!!!",
+      data: { reservations },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Unable to get any reserved car" });
   }
 };
 
@@ -193,6 +222,7 @@ module.exports = {
   getReservations,
   removeReservations,
   updateReservation,
+  getAllReservations,
 };
 
 function calculateRent(startDate, endDate, dailyRent) {
