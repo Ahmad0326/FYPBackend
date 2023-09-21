@@ -5,7 +5,7 @@ const carModel = require("../models/cars");
 const updateReservation = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { userId, startDate, endDate, rent } = req.body;
+    const { userId } = req.body;
     console.log("in the update reservation ---->", id, req.body);
     const reservations = await reservationsModel.findOne({ userId: userId });
 
@@ -17,16 +17,26 @@ const updateReservation = async (req, res, next) => {
       });
     }
 
-    const existingReservation = reservations.items.find(
+    const existingReservation = reservations.bookings.find(
       (item) => item.carId === id
     );
 
     if (existingReservation) {
-      existingReservation.rent = calculateRent(startDate, endDate, rent);
-
-      existingReservation.startDate = startDate;
-      existingReservation.endDate = endDate;
-
+      console.log("in the existing reservations");
+      //existingReservation.rent = calculateRent(req.body.reservation.startDate, req.body.reservation.endDat);
+      console.log(
+        req.body.reservation.startDate,
+        req.body.reservation.endDate,
+        req.body.rent
+      );
+      existingReservation.startDate = req.body.reservation.startDate;
+      existingReservation.endDate = req.body.reservation.endDate;
+      existingReservation.totalRent = calculateRent(
+        req.body.reservation.startDate,
+        req.body.reservation.endDate,
+        req.body.rent
+      );
+      console.log("existing", existingReservation);
       await reservations.save();
       return res.json({
         status: "success",
