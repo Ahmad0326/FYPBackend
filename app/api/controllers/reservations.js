@@ -174,11 +174,9 @@ const removeReservations = async (req, res, next) => {
 const getAllReservations = async (req, res, next) => {
   try {
     const reservations = await reservationsModel.find({}).populate({
-      // Make sure "bookings" matches your schema field name
-
       path: "userId",
-      model: userModel, // Replace with the actual user model
-      select: "name", // Specify the field you want to populate
+      model: userModel, 
+      select: "name",
     });
 
     if (!reservations) {
