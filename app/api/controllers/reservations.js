@@ -175,18 +175,29 @@ const getAllReservations = async (req, res, next) => {
   try {
     const reservations = await reservationsModel.find({}).populate({
       path: "userId",
-      model: userModel, 
+      model: userModel,
       select: "name",
     });
 
-    if (!reservations) {
+    if (!reservations || reservations.length === 0) {
       return res.json({ message: "No reservations found" });
     }
+
+    const formattedReservations = reservations.map((reservation) => ({
+      reservationId: reservation._id,
+      userName: reservation.userId.name,
+      userId: reservation.userId._id,
+      bookingCount: reservation.bookings.length,
+    }));
+
+    console.log("formatted--->", formattedReservations);
 
     return res.json({
       status: "success",
       message: "Reservations Found Successfully!!!!",
-      data: { reservations },
+      data: {
+        reservations: formattedReservations,
+      },
     });
   } catch (error) {
     console.error(error);
