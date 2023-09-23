@@ -173,11 +173,18 @@ const removeReservations = async (req, res, next) => {
 };
 const getAllReservations = async (req, res, next) => {
   try {
-    const reservations = await reservationsModel.find({}).populate({
-      path: "userId",
-      model: userModel,
-      select: "name",
-    });
+    const reservations = await reservationsModel
+      .find({})
+      .populate({
+        path: "userId",
+        model: userModel,
+        select: "name",
+      })
+      .populate({
+        path: "bookings.carId",
+        model: carModel,
+        select: "managerId",
+      });
 
     if (!reservations || reservations.length === 0) {
       return res.json({ message: "No reservations found" });
@@ -188,6 +195,9 @@ const getAllReservations = async (req, res, next) => {
       userName: reservation.userId.name,
       userId: reservation.userId._id,
       bookingCount: reservation.bookings.length,
+      bookings: reservation.bookings.map((booking) => ({
+        managerId: booking.carId.managerId,
+      })),
     }));
 
     console.log("formatted--->", formattedReservations);

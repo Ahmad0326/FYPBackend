@@ -10,7 +10,13 @@ module.exports = {
       email: req.body.email,
       password: req.body.password,
     };
-    console.log("in the controller", data.name, data.email, data.password);
+    console.log(
+      "in the controller",
+      data.name,
+      data.email,
+      data.password,
+      data.userRole
+    );
     userModel
       .create(data)
       .then((result) => {
