@@ -1,5 +1,6 @@
 const userModel = require("../models/users");
 const carModel = require("../models/cars");
+const reservationModel = require("../models/reservations");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -9,6 +10,7 @@ module.exports = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
+      userRole: req.body.userRole,
     };
     console.log(
       "in the controller",
@@ -91,6 +93,8 @@ module.exports = {
 
   deleteUser: async (req, res, next) => {
     try {
+      console.log("in the delete user-->", req.params);
+      await reservationModel.findByIdAndDelete(req.params.userId);
       await userModel.findByIdAndDelete(req.params.userId);
       res.json({
         status: "success",
@@ -116,10 +120,11 @@ module.exports = {
   },
 
   deleteManager: async (req, res, next) => {
-    const userId = req.params.userId;
+    const userId = req.params.managerId;
+    console.log(req.params);
 
     try {
-      const deletedUser = await User.findByIdAndDelete(userId);
+      const deletedUser = await userModel.findByIdAndDelete(userId);
 
       if (!deletedUser) {
         return res.status(404).json({ message: "User not found." });
