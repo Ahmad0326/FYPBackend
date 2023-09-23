@@ -58,6 +58,7 @@ const getAll = async (req, res, next) => {
   try {
     const car = await carModel.find({});
     const carList = car.map((car) => ({
+      managerId: car.managerId,
       id: car._id,
       name: car.name,
       model: car.model,
