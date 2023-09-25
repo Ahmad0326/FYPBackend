@@ -47,11 +47,23 @@ const getByName = async (req, res, next) => {
     res.json({
       status: "success",
       message: "car found!!!",
-      data: { movies: movieInfo },
+      data: { cars: carInfo },
     });
   } catch (error) {
     next(error);
   }
+};
+
+const getCarByManagerId = async (req, res, next) => {
+  try {
+    const { managerId } = req.params;
+    const carList = await carModel.find({ managerId: managerId });
+    res.json({
+      status: "success",
+      message: "car found!!!",
+      data: { cars: carList },
+    });
+  } catch (error) {}
 };
 
 const getAll = async (req, res, next) => {
@@ -167,7 +179,7 @@ module.exports = {
   getByModel,
   getAll,
   updateById,
-  // updateStatus,
+  getCarByManagerId,
   deleteById,
   create,
   getById,
