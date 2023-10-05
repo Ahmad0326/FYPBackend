@@ -5,7 +5,7 @@ const CarSchema = new Schema({
   managerId: {
     type: String,
     trim: true,
-    required: true
+    required: true,
   },
   name: {
     type: String,

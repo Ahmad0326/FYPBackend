@@ -1,4 +1,18 @@
+const multer = require("multer");
 const carModel = require("../models/cars");
+
+// Define Multer storage destination and filename settings
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Define the destination for uploaded images
+  },
+  filename: function (req, file, cb) {
+    // Keep the original filename
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const getByModel = async (req, res, next) => {
   try {
@@ -150,8 +164,44 @@ const deleteById = async (req, res, next) => {
   }
 };
 
+// const create = async (req, res, next) => {
+//   try {
+//     console.log("in the creater body--------------------->", req.body);
+
+//     const newCar = {
+//       managerId: req.body.managerId,
+//       name: req.body.name,
+//       model: req.body.model,
+//       type: req.body.type,
+//       rent: req.body.rent,
+//       make: req.body.make,
+//       color: req.body.color,
+//     };
+//     console.log("Car", newCar);
+//     await carModel.create(newCar);
+//     res.json({
+//       status: "success",
+//       message: "Car added successfully!!!",
+//       data: newCar,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 const create = async (req, res, next) => {
   try {
+    // Handle image upload using Multer middleware separately
+    console.log("in the creater body--------------------->", req.body);
+
+    // Access the uploaded image data using req.file
+    const uploadedImage = req.image;
+    console.log("uploaded image-->", uploadedImage);
+    if (!uploadedImage) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    // Access other form fields using req.body
     const newCar = {
       managerId: req.body.managerId,
       name: req.body.name,
@@ -162,11 +212,14 @@ const create = async (req, res, next) => {
       color: req.body.color,
     };
     console.log("Car", newCar);
+
+    // Save the car data to your database
     await carModel.create(newCar);
+
     res.json({
       status: "success",
       message: "Car added successfully!!!",
-      data: null,
+      data: newCar,
     });
   } catch (error) {
     next(error);
