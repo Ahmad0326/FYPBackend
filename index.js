@@ -32,8 +32,6 @@ app.get("/favicon.ico", function (req, res) {
 });
 
 function validateUser(req, res, next) {
-  console.log("in the middleware to check body", req.body);
-  console.log("in the middleware", req.headers["content-type"]);
   console.log("in the middleware", req.headers["x-access-token"]);
   jwt.verify(
     req.headers["x-access-token"],

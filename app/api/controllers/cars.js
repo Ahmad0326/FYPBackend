@@ -68,6 +68,7 @@ const getCarByManagerId = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
+    console.log("getting all cars");
     const car = await carModel.find({});
     const carList = car.map((car) => ({
       managerId: car.managerId,
