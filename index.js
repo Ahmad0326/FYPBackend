@@ -32,36 +32,23 @@ app.get("/favicon.ico", function (req, res) {
 });
 
 function validateUser(req, res, next) {
-  console.log("in the middleware to check body", req.body["x-access-token"]);
-  const token = req.body["x-access-token"];
-  jwt.verify(token, req.app.get("secretKey"), function (err, decoded) {
-    if (err) {
-      res.json({ status: "error", message: err.message, data: null });
-    } else {
-      // add user id to request
-      req.body.userId = decoded.id;
-      next();
+  console.log("in the middleware to check body", req.body);
+  console.log("in the middleware", req.headers["content-type"]);
+  console.log("in the middleware", req.headers["x-access-token"]);
+  jwt.verify(
+    req.headers["x-access-token"],
+    req.app.get("secretKey"),
+    function (err, decoded) {
+      if (err) {
+        res.json({ status: "error", message: err.message, data: null });
+      } else {
+        // add user id to request
+        req.body.userId = decoded.id;
+        next();
+      }
     }
-  });
+  );
 }
-// function validateUser(req, res, next) {
-//   console.log("in the middleware to check body", req.body);
-//   console.log("in the middleware", req.headers["content-type"]);
-//   console.log("in the middleware", req.headers["x-access-token"]);
-//   jwt.verify(
-//     req.headers["x-access-token"],
-//     req.app.get("secretKey"),
-//     function (err, decoded) {
-//       if (err) {
-//         res.json({ status: "error", message: err.message, data: null });
-//       } else {
-//         // add user id to request
-//         req.body.userId = decoded.id;
-//         next();
-//       }
-//     }
-//   );
-// }
 // express doesn't consider not found 404 as an error so we need to handle 404 explicitly
 // handle 404 error
 app.use(function (req, res, next) {
