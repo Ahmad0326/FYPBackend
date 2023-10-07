@@ -71,7 +71,7 @@ const makeAReservation = async (req, res, next) => {
     if (!carInfo) {
       return res.json({
         status: "error",
-        message: "Car not found.",
+        message: "Car not found for reservation.",
         data: null,
       });
     }
