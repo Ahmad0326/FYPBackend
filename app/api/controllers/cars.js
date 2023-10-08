@@ -57,6 +57,7 @@ const getByName = async (req, res, next) => {
 const getCarByManagerId = async (req, res, next) => {
   try {
     const { managerId } = req.params;
+    console.log("request in the manager id", req.params);
     const carList = await carModel.find({ managerId: managerId });
     res.json({
       status: "success",

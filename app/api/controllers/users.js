@@ -68,8 +68,28 @@ module.exports = {
     }
   },
 
+  getUserById: async (req, res, next) => {
+    try {
+      const { userId } = req.params;
+      const userInfo = await userModel.findById({ _id: userId });
+      res.json({
+        status: "success",
+        message: "user found!!!",
+        data: {
+          user: {
+            name: userInfo.name,
+            email: userInfo.email,
+          },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   updateUser: async (req, res, next) => {
     try {
+      console.log(req.body);
       const userId = req.params.userId;
       const username = req.body.name;
       const newPassword = req.body.password;
